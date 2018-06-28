@@ -4,6 +4,6 @@
 /.gradle/
 /build/
 /out/
-/.metadata
 .DS_Store
-.settings
+.metadata/
+/.settings/
