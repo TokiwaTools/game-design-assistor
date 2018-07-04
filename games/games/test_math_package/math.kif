@@ -1,4 +1,63 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; A Test Game for a Math Package
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(role robot)
+
+(<= (base (test ?task ?result))
+    (task ?task)
+    (result ?result))
+(base finished)
+
+(<= (input robot (run ?task))
+    (task ?task))
+
+(<= (init (test ?name waiting))
+    (task ?name))
+
+(<= (legal robot (run ?task))
+    (true (test ?task waiting)))
+
+(<= (next (test ?task1 waiting))
+(does robot (run ?task2))
+(true (test ?task1 waiting))
+(distinct ?task1 ?task2))
+
+(<= (next (test ?task success))
+    (does robot (run ?task))
+    (true (task ?task)))
+
+(<= (next (test ?task failure))
+    (does robot (run ?task))
+    (not (task ?task)))
+
+(<= terminal
+    (not open))
+
+(<= (goal robot 100)
+    (true (test ?name success)))
+
+(<= (goal robot 0)
+    (true (test ?name failure)))
+
+;;; Tasks to test operations
+
+(<= (task plus)
+    (plus 0 0 0 0 0 0 0 0 0 0 0 0)
+    (plus 0 0 0 1 0 0 0 0 0 0 0 1)
+    (plus 0 f 0 1 0 0 5 0 0 f 5 1)
+    (plus f f f f 0 0 0 1 nan nan nan nan))
+
+;;; General Functions
+
+(<= open
+(true (test ?name waiting)))
+
+(result waiting)
+(result success)
+(result failure)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; A Common Package of Mathematics
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -150,6 +209,8 @@
     (zero ?z3 ?z2 ?z1 ?z0)
     (num ?i3 ?i2 ?i1 ?i0))
 
+;;; Comparison Operations
+
 ;; i < j
 (<= (lt ?i3 ?i2 ?i1 ?i0 ?j3 ?j2 ?j1 ?j0)
     (minus ?i3 ?i2 ?i1 ?i0 ?j3 ?j2 ?j1 ?j0 nan nan nan nan))
@@ -176,3 +237,4 @@
 (<= (ne ?i3 ?i2 ?i1 ?i0 ?i3 ?i2 ?i1 ?i0)
     (not (eq ?i3 ?i2 ?i1 ?i0 ?i3 ?i2 ?i1 ?i0))
     (num ?i3 ?i2 ?i1 ?i0))
+
