@@ -153,6 +153,11 @@ task server(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
 }
 
+task gdlValidator(type: JavaExec) {
+	main = 'org.ggp.base.apps.validator.Validator'
+	classpath = sourceSets.main.runtimeClasspath
+}
+
 task simpleGameSim(type: JavaExec) {
     main = 'org.ggp.base.apps.utilities.SimpleGameSim'
     classpath = sourceSets.main.runtimeClasspath
