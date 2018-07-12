@@ -12,27 +12,27 @@
 (<= (input robot (run ?task))
     (task ?task))
 
-(<= (init (test ?name waiting))
-    (task ?name))
+(<= (init (test ?task waiting))
+    (task ?task))
 
 (<= (legal robot (run ?task))
     (true (test ?task waiting)))
 
-(<= (next (test ?task1 waiting))
-(does robot (run ?task2))
-(true (test ?task1 waiting))
-(distinct ?task1 ?task2))
+(<= (next (test ?task1 ?result))
+    (does robot (run ?task2))
+    (true (test ?task1 ?result))
+    (distinct ?task1 ?task2))
 
 (<= (next (test ?task success))
     (does robot (run ?task))
-    (true (task ?task)))
+    (success ?task))
 
 (<= (next (test ?task failure))
     (does robot (run ?task))
-    (not (task ?task)))
-
+    (not (success ?task)))
+    
 (<= terminal
-    (not open))
+    (not running))
 
 (<= (goal robot 100)
     (true (test ?name success)))
@@ -42,7 +42,8 @@
 
 ;;; Tasks to test operations
 
-(<= (task plus)
+(task plus)
+(<= (success plus)
     (plus 0 0 0 0 0 0 0 0 0 0 0 0)
     (plus 0 0 0 1 0 0 0 0 0 0 0 1)
     (plus 0 f 0 1 0 0 5 0 0 f 5 1)
@@ -50,8 +51,8 @@
 
 ;;; General Functions
 
-(<= open
-(true (test ?name waiting)))
+(<= running
+    (true (test ?name waiting)))
 
 (result waiting)
 (result success)
