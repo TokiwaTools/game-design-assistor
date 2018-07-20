@@ -51,8 +51,10 @@
 (task successor)
 (task lt)
 (task adder)
+(task multiplier)
 (task plus)
 (task minus)
+;(task multiplication)
 
 (<= (success successor)
     (succ 1 0 1 0 1 0 1 1)
@@ -67,6 +69,14 @@
     (adder f f f d 2)
     (not (adder 4 a 4 3 1))
     (not (adder 1 k 0 0 1)))
+
+(<= (success multiplier)
+    (multiplier 0 0 0 0)
+    (multiplier 1 1 0 1)
+    (multiplier f 2 1 e)
+    (multiplier f f e 1)
+    (not (multiplier 4 a 8 b))
+    (not (multiplier n 6 n 4)))
 
 (<= (success lt)
     (lt 0 0 0 0 0 0 0 1)
@@ -88,11 +98,12 @@
     (not (minus g a 3 0 j t 0 0 h b a c))
     (minus 0 0 0 1 f f f f nan nan nan nan))
 
-;(<= (success multiplication)
-;    (mul 0 0 0 0 0 0 0 0 0 0 0 0)
-;    (mul 0 1 a 4 0 0 4 a 8 b e 8)
-;    (mul 
-    
+(<= (success multiplication)
+    (mul 0 0 0 0 0 0 0 0 0 0 0 0)
+    (mul 0 1 a 4 0 0 4 a 8 b e 8)
+    (not (mul 2 5 2 8 0 0 3 a 8 b c e))
+    (not (mul g a 7 0 3 b a k j j b c))
+    (mul b 5 0 3 f 3 a a nan nan nan nan))    
 
 ;;; General Functions
 
@@ -226,6 +237,18 @@
     (succi ?bm ?b)
     (adder ?ap ?bm ?x ?s ?c))
 
+;; Multiplier
+; (multiplier ?a ?b ?s1 ?s0)
+; ?a: input A | ?b: input B | ?s1?s0: product-output
+
+(<= (multiplier ?a 0 0 0)
+    (i ?a))
+(<= (multiplier ?a ?b ?s1 ?s0)
+    (multiplier ?a ?bm ?sa1 ?sa0)
+    (succi ?bm ?b)
+    (adder ?sa0 ?a 0 ?s0 ?c0)
+    (adder ?sa1 ?c0 0 ?s1 0))
+
 ;; Comparator
 ; (comparator ?i ?j) -> (?i < ?j)
 
@@ -261,18 +284,19 @@
     (num ?i3 ?i2 ?i1 ?i0))
 
 ;; i * j = s
-(<= (mul ?i3 ?i2 ?i1 ?i0 0 0 0 0 0 0 0 0)
-    (num ?i3 ?i2 ?i1 ?i0))
-(<= (mul ?i3 ?i2 ?i1 ?i0 ?ip3 ?ip2 ?ip1 ?ip0 ?i3 ?i2 ?i1 ?i0)
-    (succ ?i3 ?i2 ?i1 ?i0 ?ip3 ?ip2 ?ip1 ?ip0))
-(<= (mul ?i3 ?i2 ?i1 ?i0 ?ipp3 ?ipp2 ?ipp1 ?ipp0 ?id3 ?id2 ?id1 ?id0)
-    (plus ?i3 ?i2 ?i1 ?i0 ?i3 ?i2 ?i1 ?i0 ?id3 ?id2 ?id1 ?id0)
-    (succ ?i3 ?i2 ?i1 ?i0 ?ip3 ?ip2 ?ip1 ?ip0)
-    (succ ?ip3 ?ip2 ?ip1 ?ip0 ?ipp3 ?ipp2 ?ipp1 ?ipp0))
-(<= (mul ?i3 ?i2 ?i1 ?i0 ?j3 ?j2 ?j1 ?j0 ?s3 ?s2 ?s1 ?s0)
-    (plus ?i3 ?i2 ?i1 ?i0 ?jp3 ?jp2 ?jp1 ?jp0 ?sa3 ?sa2 ?sa1 ?sa0)
-    (plus ?s3 ?s2 ?s1 ?s0 ?i3 ?i2 ?i1 ?i0 ?sa3 ?sa2 ?sa1 ?sa0)
-    (succ ?j3 ?j2 ?j1 ?j0 ?jp3 ?jp2 ?jp1 ?jp0))
+
+;(<= (mul ?i3 ?i2 ?i1 ?i0 0 0 0 0 0 0 0 0)
+;    (num ?i3 ?i2 ?i1 ?i0))
+;(<= (mul ?i3 ?i2 ?i1 ?i0 ?ip3 ?ip2 ?ip1 ?ip0 ?i3 ?i2 ?i1 ?i0)
+;    (succ ?i3 ?i2 ?i1 ?i0 ?ip3 ?ip2 ?ip1 ?ip0))
+;(<= (mul ?i3 ?i2 ?i1 ?i0 ?ipp3 ?ipp2 ?ipp1 ?ipp0 ?id3 ?id2 ?id1 ?id0)
+;    (plus ?i3 ?i2 ?i1 ?i0 ?i3 ?i2 ?i1 ?i0 ?id3 ?id2 ?id1 ?id0)
+;    (succ ?i3 ?i2 ?i1 ?i0 ?ip3 ?ip2 ?ip1 ?ip0)
+;    (succ ?ip3 ?ip2 ?ip1 ?ip0 ?ipp3 ?ipp2 ?ipp1 ?ipp0))
+;(<= (mul ?i3 ?i2 ?i1 ?i0 ?j3 ?j2 ?j1 ?j0 ?s3 ?s2 ?s1 ?s0)
+;    (plus ?i3 ?i2 ?i1 ?i0 ?jp3 ?jp2 ?jp1 ?jp0 ?sa3 ?sa2 ?sa1 ?sa0)
+;    (plus ?s3 ?s2 ?s1 ?s0 ?i3 ?i2 ?i1 ?i0 ?sa3 ?sa2 ?sa1 ?sa0)
+;    (succ ?j3 ?j2 ?j1 ?j0 ?jp3 ?jp2 ?jp1 ?jp0))
 
 ;; i / j = s
 (<= (div ?i3 ?i2 ?i1 ?i0 ?j3 ?j2 ?j1 ?j0 ?s3 ?s2 ?s1 ?s0)
