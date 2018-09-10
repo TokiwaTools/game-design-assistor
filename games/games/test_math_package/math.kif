@@ -54,7 +54,7 @@
 (task multiplier)
 (task plus)
 (task minus)
-;(task multiplication)
+(task multiplication)
 
 (<= (success successor)
     (succ 1 0 1 0 1 0 1 1)
@@ -146,7 +146,7 @@
 ;;;    (ne num.a num.b) -> num.a != num.b
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;;; Digit
+;;; Hex Digits
 
 (i 0)
 (i 1)
@@ -165,6 +165,11 @@
 (i e)
 (i f)
 
+;;; Binary Digits
+
+(binary o)
+(binary i)
+
 ;;; Numbers / NaN
 
 (<= (num ?i3 ?i2 ?i1 ?i0)
@@ -173,6 +178,25 @@
     (i ?i2)
     (i ?i3))
 (num nan nan nan nan)
+
+(<= (num_b ?b15 ?b14 ?b13 ?b12 ?b11 ?b10 ?b9 ?b8 ?b7 ?b6 ?b5 ?b4 ?b3 ?b2 ?b1 ?b0)
+    (binary ?b15)
+    (binary ?b14)
+    (binary ?b13)
+    (binary ?b12)
+    (binary ?b11)
+    (binary ?b10)
+    (binary ?b9)
+    (binary ?b8)
+    (binary ?b7)
+    (binary ?b6)
+    (binary ?b5)
+    (binary ?b4)
+    (binary ?b3)
+    (binary ?b2)
+    (binary ?b1)
+    (binary ?b0))
+(num_b nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan)
 
 (minnum 0 0 0 0)
 (maxnum f f f f)
@@ -213,50 +237,89 @@
     (num ?j3 0 0 0)
     (succi ?i3 ?j3))
 
+;; Logical Operations
+
+(_or o o o)
+(_or o i i)
+(_or i o i)
+(_or i i i)
+
+(_and o o o)
+(_and o i o)
+(_and i o o)
+(_and i i i)
+
+(_not o i)
+(_not i o)
+
+(_nor o o i)
+(_nor o i o)
+(_nor i o o)
+(_nor i i o)
+
+(_nand o o i)
+(_nand o i i)
+(_nand i o i)
+(_nand i i o)
+
+(_xor o o o)
+(_xor o i i)
+(_xor i o i)
+(_xor i i o)
+
 ;;; Arithmetic Operations
+
+; 四則演算は暗黙的に16進数から2進数に変換して処理することにしよう
 
 ;; Full Adder
 ; (adder ?a ?b ?x ?s ?c) -> ?a + ?b + ?x = ?c?s
 ; ?a: input A | ?b: input B | ?x: carry-input | ?s: sum-output | ?c: carry-output
 
-(<= (adder ?a 0 0 ?a 0)
-    (i ?a))
-(<= (adder f ?b 0 ?bm 1)
-    (succi ?bm ?b))
-(adder f f 1 f 1)
-(<= (adder f f ?x ?xmm 2)
-    (succi ?xmm ?xm)
-    (succi ?xm ?x))
+(<= (adder ?a ?b ?x ?s ?c)
+    (_xor ?a ?b ?s1)
+    (_xor ?s1 ?x ?s)
+    (_and ?a ?b ?c1)
+    (_and ?c1 ?x ?c2)
+    (_or ?c1 ?c2 ?c))
 
-(<= (adder ?a ?b ?x ?s ?c)
-    (succi ?b ?bp)
-    (succi ?xm ?x)
-    (adder ?a ?bp ?xm ?s ?c))
-(<= (adder ?a ?b ?x ?s ?c)
-    (succi ?a ?ap)
-    (succi ?bm ?b)
-    (adder ?ap ?bm ?x ?s ?c))
+;(<= (adder ?a 0 0 ?a 0)
+;    (i ?a))
+;(<= (adder f ?b 0 ?bm 1)
+;    (succi ?bm ?b))
+;(adder f f 1 f 1)
+;(<= (adder f f ?x ?xmm 2)
+;    (succi ?xmm ?xm)
+;    (succi ?xm ?x))
+
+;(<= (adder ?a ?b ?x ?s ?c)
+;    (succi ?b ?bp)
+;    (succi ?xm ?x)
+;    (adder ?a ?bp ?xm ?s ?c))
+;(<= (adder ?a ?b ?x ?s ?c)
+;    (succi ?a ?ap)
+;    (succi ?bm ?b)
+;    (adder ?ap ?bm ?x ?s ?c))
 
 ;; Multiplier
 ; (multiplier ?a ?b ?s1 ?s0)
 ; ?a: input A | ?b: input B | ?s1?s0: product-output
 
-(<= (multiplier ?a 0 0 0)
-    (i ?a))
-(<= (multiplier ?a ?b ?s1 ?s0)
-    (multiplier ?a ?bm ?sa1 ?sa0)
-    (succi ?bm ?b)
-    (adder ?sa0 ?a 0 ?s0 ?c0)
-    (adder ?sa1 ?c0 0 ?s1 0))
+;(<= (multiplier ?a 0 0 0)
+;    (i ?a))
+;(<= (multiplier ?a ?b ?s1 ?s0)
+;    (multiplier ?a ?bm ?sa1 ?sa0)
+;    (succi ?bm ?b)
+;    (adder ?sa0 ?a 0 ?s0 ?c0)
+;    (adder ?sa1 ?c0 0 ?s1 0))
 
 ;; Comparator
 ; (comparator ?i ?j) -> (?i < ?j)
 
-(<= (comparator ?i ?j)
-    (succi ?i ?j))
-(<= (comparator ?h ?j)
-    (succi ?i ?j)
-    (comparator ?h ?i))
+;(<= (comparator ?i ?j)
+;    (succi ?i ?j))
+;(<= (comparator ?h ?j)
+;    (succi ?i ?j)
+;    (comparator ?h ?i))
 
 ;; i + j = s
 
