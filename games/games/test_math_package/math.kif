@@ -49,17 +49,44 @@
 ;;; Tasks to test operations
 
 (task successor)
-(task lt)
-(task adder)
-(task multiplier)
-(task plus)
-(task minus)
-(task multiplication)
+(task num_b)
+(task shiftleft)
+(task shiftright)
+(task binary_adder)
+;(task lt)
+;(task adder)
+;(task multiplier)
+;(task plus)
+;(task minus)
+;(task multiplication)
 
 (<= (success successor)
     (succ 1 0 1 0 1 0 1 1)
     (succ 1 0 1 f 1 0 2 0)
     (not (succ 1 0 0 2 1 0 0 4)))
+
+(<= (success num_b)
+    (num_b i o o i o i i o o i i o i o i o)
+    (num_b i i o o i o o i i i o i i o i i))
+
+(<= (success shiftleft)
+    (sl o i i o i i o o o i o i i i o o 0 o i i o i i o o o i o i i i o o)
+    (sl o i i o i i o o o i o i i i o o 1 i i o i i o o o i o i i i o o o)
+    (sl i o i o o o o i i o i o i o o i 2 i o o o o i i o i o i o o i o o)
+    (sl i o i o o o o i i o i o i o o i 5 o o i i o i o i o o i o o o o o))
+    
+(<= (success shiftright)
+    (sr o i i o i i o o o i o i i i o o 0 o i i o i i o o o i o i i i o o)
+    (sr o i i o i i o o o i o i i i o o 1 o o i i o i i o o o i o i i i o)
+    (sr i o i o o o o i i o i o i o o i 2 o o i o i o o o o i i o i o i o)
+    (sr i o i o o o o i i o i o i o o i 5 o o o o o i o i o o o o i i o i))
+
+(<= (success binary_adder)
+    (adder o o o o o)
+    (adder o i o i o)
+    (adder i o o i o)
+    (adder o i i o i)
+    (adder i i i i i))
 
 (<= (success adder)
     (adder 0 0 0 0 0)
@@ -196,7 +223,6 @@
     (binary ?b2)
     (binary ?b1)
     (binary ?b0))
-(num_b nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan nan)
 
 (minnum 0 0 0 0)
 (maxnum f f f f)
@@ -267,6 +293,24 @@
 (_xor i o i)
 (_xor i i o)
 
+;; Shift Operations
+
+; Logical Right-Shift
+(<= (sr ?b15 ?b14 ?b13 ?b12 ?b11 ?b10 ?b9 ?b8 ?b7 ?b6 ?b5 ?b4 ?b3 ?b2 ?b1 ?b0 0 ?b15 ?b14 ?b13 ?b12 ?b11 ?b10 ?b9 ?b8 ?b7 ?b6 ?b5 ?b4 ?b3 ?b2 ?b1 ?b0)
+    (num_b ?b15 ?b14 ?b13 ?b12 ?b11 ?b10 ?b9 ?b8 ?b7 ?b6 ?b5 ?b4 ?b3 ?b2 ?b1 ?b0))
+(<= (sr ?a15 ?a14 ?a13 ?a12 ?a11 ?a10 ?a9 ?a8 ?a7 ?a6 ?a5 ?a4 ?a3 ?a2 ?a1 ?a0 ?n ?b15 ?b14 ?b13 ?b12 ?b11 ?b10 ?b9 ?b8 ?b7 ?b6 ?b5 ?b4 ?b3 ?b2 ?b1 ?b0)
+    (binary ?a0)
+    (succi ?nm ?n)
+    (sr o ?a15 ?a14 ?a13 ?a12 ?a11 ?a10 ?a9 ?a8 ?a7 ?a6 ?a5 ?a4 ?a3 ?a2 ?a1 ?nm ?b15 ?b14 ?b13 ?b12 ?b11 ?b10 ?b9 ?b8 ?b7 ?b6 ?b5 ?b4 ?b3 ?b2 ?b1 ?b0))
+
+; Logical Left-Shift
+(<= (sl ?b15 ?b14 ?b13 ?b12 ?b11 ?b10 ?b9 ?b8 ?b7 ?b6 ?b5 ?b4 ?b3 ?b2 ?b1 ?b0 0 ?b15 ?b14 ?b13 ?b12 ?b11 ?b10 ?b9 ?b8 ?b7 ?b6 ?b5 ?b4 ?b3 ?b2 ?b1 ?b0)
+    (num_b ?b15 ?b14 ?b13 ?b12 ?b11 ?b10 ?b9 ?b8 ?b7 ?b6 ?b5 ?b4 ?b3 ?b2 ?b1 ?b0))
+(<= (sl ?a15 ?a14 ?a13 ?a12 ?a11 ?a10 ?a9 ?a8 ?a7 ?a6 ?a5 ?a4 ?a3 ?a2 ?a1 ?a0 ?n ?b15 ?b14 ?b13 ?b12 ?b11 ?b10 ?b9 ?b8 ?b7 ?b6 ?b5 ?b4 ?b3 ?b2 ?b1 ?b0)
+    (succi ?nm ?n)
+    (binary ?a15)
+    (sl ?a14 ?a13 ?a12 ?a11 ?a10 ?a9 ?a8 ?a7 ?a6 ?a5 ?a4 ?a3 ?a2 ?a1 ?a0 o ?nm ?b15 ?b14 ?b13 ?b12 ?b11 ?b10 ?b9 ?b8 ?b7 ?b6 ?b5 ?b4 ?b3 ?b2 ?b1 ?b0))
+
 ;;; Arithmetic Operations
 
 ; 四則演算は暗黙的に16進数から2進数に変換して処理することにしよう
@@ -279,7 +323,7 @@
     (_xor ?a ?b ?s1)
     (_xor ?s1 ?x ?s)
     (_and ?a ?b ?c1)
-    (_and ?c1 ?x ?c2)
+    (_and ?s1 ?x ?c2)
     (_or ?c1 ?c2 ?c))
 
 ;(<= (adder ?a 0 0 ?a 0)
