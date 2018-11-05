@@ -2,7 +2,7 @@ package me.kiito.gda.game;
 
 import java.util.Objects;
 
-final class Position implements Comparable<Position> {
+public final class Position implements Comparable<Position> {
 	public static final Position ALL = new Position();
 	public final int X, Y;
 	public final Notation NOTATION;
@@ -61,5 +61,10 @@ final class Position implements Comparable<Position> {
     	if (this.X > o.X) return 1;
     	if (this.X == o.X && this.Y == o.Y) return 0;
     	return -1;
+    }
+
+    public enum Notation {
+    	ABSTRACT,
+    	RELATIVE
     }
 }
