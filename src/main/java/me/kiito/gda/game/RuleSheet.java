@@ -11,15 +11,15 @@ class RuleSheet {
 	private List<GameState> endStates;
 	private List<GameState> movingRules;
 	private Map<Player, ScoringMethod> scoringMethods;
-	private Map<String, CountableComponent> countableComponents;
+	private Map<String, GameStateCounter> stateCounters;
 
 	RuleSheet(Game game) {
 		this.game = game;
-		initialState = new BoardState(Position.ALL, Player.NONE, Piece.NONE);
+		//initialState = new BoardState(Position.ALL, Player.NONE, Piece.NONE);
 		endStates = new ArrayList<>();
 		movingRules = new ArrayList<>();
 		scoringMethods = new HashMap<>();
-		countableComponents = new HashMap<>();
+		stateCounters = new HashMap<>();
 	}
 
 	public GameState getInitialState() {
@@ -54,11 +54,11 @@ class RuleSheet {
 		scoringMethods.put(method.PLAYER, method);
 	}
 
-	public CountableComponent getCountableComponent(String name) {
-		return countableComponents.get(name);
+	public GameStateCounter getCountableComponent(String name) {
+		return stateCounters.get(name);
 	}
 
-	public void addCountableComponent(CountableComponent component) {
-		countableComponents.put(component.getName(), component);
+	public void addCountableComponent(GameStateCounter component) {
+		stateCounters.put(component.getName(), component);
 	}
 }

@@ -1,34 +1,21 @@
 package me.kiito.gda.game;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 class Player {
-	public static final Player NONE = new Player(true);
-	public static final Player ALL = new Player(false);
+	public static final Player NONE = new Player();
 	private String name;
-	private final Set<Piece> field;
-	private final boolean isNone;
-	private final boolean isAll;
+	private final Map<Piece, Integer> field;
 
 	protected Player(String name) {
 		this.name = name;
-		field = new HashSet<>();
-		isNone = false;
-		isAll = false;
+		field = new HashMap<>();
 	}
 
-	private Player(boolean isNone) {
+	private Player() {
+		this.name = "{NONE}";
 		field = null;
-		if (isNone) {
-			this.name = "NONE";
-			this.isNone = true;
-			this.isAll = false;
-		} else {
-			this.name = "ALL";
-			this.isNone = false;
-			this.isAll = true;
-		}
 	}
 
 	public void setName(String name) {
@@ -39,28 +26,8 @@ class Player {
 		return toString();
 	}
 
-	public boolean isNone() {
-		return isNone;
-	}
-
-	public boolean isAll() {
-		return isAll;
-	}
-
-	protected boolean hasPiece(Piece piece) {
-		return field.contains(piece);
-	}
-
-	protected void addPiece(Piece piece) {
-		field.add(piece);
-	}
-
-	protected void removePiece(Piece piece) {
-		field.remove(piece);
-	}
-
-	protected Piece[] getField() {
-		return field.toArray( new Piece [field.size()] );
+	protected Map<Piece, Integer> getField() {
+		return field;
 	}
 
 	@Override

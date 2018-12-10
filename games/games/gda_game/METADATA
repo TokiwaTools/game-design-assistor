@@ -1,0 +1,10 @@
+{
+	"numRoles": 2,
+	"description": "",
+	"user_interface": "",
+	"stylesheet": "",
+	"rulesheet": "base.kif",
+	"gameName": "Test: GDL Base Components",
+	"roleNames": ["1P", "2P"],
+	"version": 0
+}

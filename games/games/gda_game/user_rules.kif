@@ -1,0 +1,44 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; User: Rules
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;; Initial States
+
+(role player1)
+(role player2)
+
+(init (turn 0 0 0 0 player1))
+
+(board_size 0 0 0 3 0 0 0 3)
+
+(<= (init (score 0 0 0 0 ?player))
+    (role ?player))
+
+;;; Terminal States
+
+(<= terminal
+    (not (has_legal_moves ?player))
+    (role ?player))
+
+;;; Moving Rules
+
+;;; Scoring Methods
+
+;;; Results
+
+(<= (goal ?player1 100)
+    (true (score ?player1 ?n_3 ?n_2 ?n_1 ?n_0))
+    (true (score ?player2 ?m_3 ?m_2 ?m_1 ?m_0))
+    (player_opponent ?player1 ?player2)
+    (comparator_short lt ?n_3 ?n_2 ?n_1 ?n_0 ?m_3 ?m_2 ?m_1 ?m_0))
+
+(<= (goal ?player1 0)
+    (goal ?player2 100)
+    (player_opponent ?player1 ?player2))
+
+(<= (goal ?player 50)
+    (true (score ?player1 ?n_3 ?n_2 ?n_1 ?n_0))
+    (true (score ?player2 ?n_3 ?n_2 ?n_1 ?n_0))
+    (player_opponent ?player1 ?player2)
+    (short ?n_3 ?n_2 ?n_1 ?n_0)
+    (role ?player))

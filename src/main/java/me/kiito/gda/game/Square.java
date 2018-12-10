@@ -38,19 +38,8 @@ class Square {
 	@Override
 	public String toString() {
 		String posStr = POSITION.toString();
-		String playerStr = "Player: ";
-		if (player.isAll() || player.isNone()) {
-			playerStr += "[" + player.toString() + "]";
-		} else {
-			playerStr += player.toString();
-		}
-		String pieceStr = "Piece: ";
-		if (piece.isAll() || piece.isNone()) {
-			pieceStr += "[" + piece.toString() + "]";
-		} else {
-			pieceStr += piece.toString();
-		}
-
+		String playerStr = "Player: " + player.toString();
+		String pieceStr = "Piece: " + piece.toString();
 		return posStr + " (" + playerStr + ") (" + pieceStr + ")";
 	}
 }

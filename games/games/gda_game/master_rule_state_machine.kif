@@ -1,0 +1,23 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Master: Rule State Machine
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;; Turn
+
+(<= (next (turn ?np_3 ?np_2 ?np_1 ?np_0 ?playerp))
+    (true (turn ?n_3 ?n_2 ?n_1 ?n_0 ?player))
+    (succ ?n_3 ?n_2 ?n_1 ?n_0 ?np_3 ?np_2 ?np_1 ?np_0)
+    (player_opponent ?player ?playerp))
+
+(<= (next end_for_max_turn)
+    (true (turn f f f f ?player))
+    (role ?player))
+
+(<= terminal
+    (true end_for_max_turn))
+
+;;; Results (Goal)
+
+(<= (goal ?player 0)
+    (true end_for_max_turn)
+    (role ?player))

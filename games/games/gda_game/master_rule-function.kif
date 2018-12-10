@@ -1,0 +1,138 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Master: Rule Function
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;; Board
+
+(<= (cell_in_range
+        ?x_3 ?x_2 ?x_1 ?x_0
+        ?y_3 ?y_2 ?y_1 ?y_0)
+    (ge ?x_3 ?x_2 ?x_1 ?x_0 ?minX_3 ?minX_2 ?minX_1 ?minX_0)
+    (ge ?y_3 ?y_2 ?y_1 ?y_0 ?minY_3 ?minY_2 ?minY_1 ?minY_0)
+    (le ?x_3 ?x_2 ?x_1 ?x_0 ?maxX_3 ?maxX_2 ?maxX_1 ?maxX_0)
+    (le ?y_3 ?y_2 ?y_1 ?y_0 ?maxY_3 ?maxY_2 ?maxY_1 ?maxY_0)
+    (board_range ?minX_3 ?minX_2 ?minX_1 ?minX_0 ?minY_3 ?minY_2 ?minY_1 ?minY_0 ?maxX_3 ?maxX_2 ?maxX_1 ?maxX_0 ?maxY_3 ?maxY_2 ?maxY_1 ?maxY_0))
+
+(<= (cell_succ
+        ?x_3 ?x_2 ?x_1 ?x_0
+        ?y_3 ?y_2 ?y_1 ?y_0
+        ?xp_3 ?xp_2 ?xp_1 ?xp_0
+        ?y_3 ?y_2 ?y_1 ?y_0)
+    (cell_in_range ?x_3 ?x_2 ?x_1 ?x_0 ?y_3 ?y_2 ?y_1 ?y_0)
+    (cell_in_range ?xp_3 ?xp_2 ?xp_1 ?xp_0 ?y_3 ?y_2 ?y_1 ?y_0)
+    (succ ?x_3 ?x_2 ?x_1 ?x_0 ?xp_3 ?xp_2 ?xp_1 ?xp_0))
+(<= (cell_succ
+        ?xmax_3 ?xmax_2 ?xmax_1 ?xmax_0
+        ?y_3 ?y_2 ?y_1 ?y_0
+        ?xmin_3 ?xmin_2 ?xmin_1 ?xmin_0
+        ?yp_3 ?yp_2 ?yp_1 ?yp_0)
+    (board_range ?xmin_3 ?xmin_2 ?xmin_1 ?xmin_0 ?ymin_3 ?ymin_2 ?ymin_1 ?ymin_0 ?xmax_3 ?xmax_2 ?xmax_1 ?xmax_0 ?ymax_3 ?ymax_2 ?ymax_1 ?ymax_0)
+    (cell_in_range ?x_3 ?x_2 ?x_1 ?x_0 ?yp_3 ?yp_2 ?yp_1 ?yp_0)
+    (succ ?y_3 ?y_2 ?y_1 ?y_0 ?yp_3 ?yp_2 ?yp_1 ?yp_0))
+
+;;; Game State
+
+(<= (game_state $name $previous_state $next_state)
+    (board_state $player $piece $n_3 $n_2 $n_1 $n_0 $comparator))
+(<= (game_state $name $previous_state $next_state)
+    (cell_state $x_3 $x_2 $x_1 $x_0 $y_3 $y_2 $y_1 $y_0 $pos_notation $player $piece))
+(<= (game_state $name $previous_state $next_state)
+    (field_state $player $piece $n_3 $n_2 $n_1 $n_0 $comparator))
+(<= (game_state $name $previous_state $next_state)
+    (turn_state $n_3 $n_2 $n_1 $n_0 $controller))
+
+;; Board State
+
+(<= (board_state ?player ?piece ?n_3 ?n_2 ?n_1 ?n_0 ?comparator)
+    (piece_total_on_board ?player ?piece ?m_3 ?m_2 ?m_1 ?m_0)
+    (compare ?comparator ?n_3 ?n_2 ?n_1 ?n_0 ?m_3 ?m_2 ?m_1 ?m_0))
+
+(<= (board_state ?player ?piece _ _ _ _ any)
+    (piece_total_on_board ?player ?piece ?cnt_3 ?cnt_2 ?cnt_1 ?cnt_0)
+    (zero ?cnt_3 ?cnt_2 ?cnt_1 ?cnt_0 o))
+
+(<= (board_state ?player ?piece _ _ _ _ max)
+    (piece_total_on_board ?player ?piece ?cells_3 ?cells_2 ?cells_1 ?cells_0)
+    (cell_num ?cells_3 ?cells_2 ?cells_1 ?cells_0))
+
+(<= (board_state ?player any ?n_3 ?n_2 ?n_1 ?n_0 ?enumerable)
+    (board_state ?player ?piece ?n_3 ?n_2 ?n_1 ?n_0 ?enumerable)
+    (piece ?piece))
+
+(<= (piece_total_on_board ?player ?piece ?cnt_3 ?cnt_2 ?cnt_1 ?cnt_0)
+    (piece_count_on_board ?xmax_3 ?xmax_2 ?xmax_1 ?xmax_0 ?ymax_3 ?ymax_2 ?ymax_1 ?ymax_0 ?player ?piece ?cnt_3 ?cnt_2 ?cnt_1 ?cnt_0))
+
+(<= (piece_count_on_board 0 0 0 0 0 0 0 0 ?player ?piece 0 0 0 1)
+    (true (cell 0 0 0 0 0 0 0 0 absolute ?player ?piece)))
+(<= (piece_count_on_board 0 0 0 0 0 0 0 0 ?player ?piece 0 0 0 0)
+    (player ?player)
+    (piece ?piece)
+    (not (true (cell 0 0 0 0 0 0 0 0 absolute ?player ?piece))))
+(<= (piece_count_on_board ?xp_3 ?xp_2 ?xp_1 ?xp_0 ?yp_3 ?yp_2 ?yp_1 ?yp_0 ?player ?piece ?np_3 ?np_2 ?np_1 ?np_0)
+    (cell_succ ?x_3 ?x_2 ?x_1 ?x_0 ?y_3 ?y_2 ?y_1 ?y_0 ?xp_3 ?xp_2 ?xp_1 ?xp_0 ?yp_3 ?yp_2 ?yp_1 ?yp_0)
+    (piece_count_on_board ?x_3 ?x_2 ?x_1 ?x_0 ?y_3 ?y_2 ?y_1 ?y_0 ?player ?piece ?n_3 ?n_2 ?n_1 ?n_0)
+    (succ ?n_3 ?n_2 ?n_1 ?n_0 ?np_3 ?np_2 ?np_1 ?np_0)
+    (true (cell ?xp_3 ?xp_2 ?xp_1 ?xp_0 ?yp_3 ?yp_2 ?yp_1 ?yp_0 absolute ?player ?piece)))
+(<= (piece_count_on_board ?xp_3 ?xp_2 ?xp_1 ?xp_0 ?yp_3 ?yp_2 ?yp_1 ?yp_0 ?player ?piece ?np_3 ?np_2 ?np_1 ?np_0)
+    (cell_succ ?x_3 ?x_2 ?x_1 ?x_0 ?y_3 ?y_2 ?y_1 ?y_0 ?xp_3 ?xp_2 ?xp_1 ?xp_0 ?yp_3 ?yp_2 ?yp_1 ?yp_0)
+    (piece_count_on_board ?x_3 ?x_2 ?x_1 ?x_0 ?y_3 ?y_2 ?y_1 ?y_0 ?player ?piece ?n_3 ?n_2 ?n_1 ?n_0)
+    (succ ?n_3 ?n_2 ?n_1 ?n_0 ?np_3 ?np_2 ?np_1 ?np_0)
+    (not (true (cell ?xp_3 ?xp_2 ?xp_1 ?xp_0 ?yp_3 ?yp_2 ?yp_1 ?yp_0 absolute ?player ?piece))))
+
+(<= (cell_num ?cells_3 ?cells_2 ?cells_1 ?cells_0)
+    (minus ?maxx_3 ?maxx_2 ?maxx_1 ?maxx_0 ?minx_3 ?minx_2 ?minx_1 ?minx_0 ?widthm_3 ?widthm_2 ?widthm_1 ?widthm_0)
+    (minus ?maxy_3 ?maxy_2 ?maxy_1 ?maxy_0 ?miny_3 ?miny_2 ?miny_1 ?miny_0 ?heightm_3 ?heightm_2 ?heightm_1 ?heightm_0)
+    (succ ?widthm_3 ?widthm_2 ?widthm_1 ?widthm_0 ?width_3 ?width_2 ?width_1 ?width_0)
+    (succ ?heightm_3 ?heightm_2 ?heightm_1 ?heightm_0 ?height_3 ?height_2 ?height_1 ?height_0)
+    (mul ?width_3 ?width_2 ?width_1 ?width_0 ?height_3 ?height_2 ?height_1 ?height_0 ?cells_3 ?cells_2 ?cells_1 ?cells_0))
+
+;; Square State
+
+(<= (square_state ?x_3 ?x_2 ?x_1 ?x_0 ?y_3 ?y_2 ?y_1 ?y_0 ?pos_notation ?player ?piece)
+    (true (square ?x_3 ?x_2 ?x_1 ?x_0 ?y_3 ?y_2 ?y_1 ?y_0 ?pos_notation ?player ?piece)))
+
+(<= (square_state ?x_3 ?x_2 ?x_1 ?x_0 ?y_3 ?y_2 ?y_1 ?y_0 ?pos_notation any ?piece)
+    (square_state ?x_3 ?x_2 ?x_1 ?x_0 ?y_3 ?y_2 ?y_1 ?y_0 ?pos_notation ?player ?piece)
+    (player ?player))
+
+(<= (square_state ?x_3 ?x_2 ?x_1 ?x_0 ?y_3 ?y_2 ?y_1 ?y_0 ?pos_notation ?player any)
+    (square_state ?x_3 ?x_2 ?x_1 ?x_0 ?y_3 ?y_2 ?y_1 ?y_0 ?pos_notation ?player ?piece)
+    (piece ?piece))
+
+;; Field State
+
+(<= (field_state ?player ?piece ?n_3 ?n_2 ?n_1 ?n_0 ?comparator)
+    (true (field ?player ?piece ?m_3 ?m_2 ?m_1 ?m_0))
+    (compare ?comparator ?n_3 ?n_2 ?n_1 ?n_0 ?m_3 ?m_2 ?m_1 ?m_0))
+
+(<= (field_state ?player ?piece _ _ _ _ any)
+    (field_state ?player ?piece ?n_3 ?n_2 ?n_1 ?n_0 eq)
+    (num ?n_3 ?n_2 ?n_1 ?n_0))
+
+(<= (field_state any ?piece ?n_3 ?n_2 ?n_1 ?n_0 ?comparator)
+    (field_state ?player ?piece ?n_3 ?n_2 ?n_1 ?n_0 ?comparator)
+    (player ?player))
+
+;; Turn State
+
+(<= (turn_state ?turn_3 ?turn_2 ?turn_1 ?turn_0 ?controller)
+    (true (turn ?turn_3 ?turn_2 ?turn_1 ?turn_0))
+    (true (control ?controller)))
+
+(<= (turn_state _ _ _ _ ?controller)
+    (true (control ?controller)))
+
+(<= (turn_state ?turn_3 ?turn_2 ?turn_1 ?turn_0 any)
+    (true (turn ?turn_3 ?turn_2 ?turn_1 ?turn_0)))
+
+;;; Game State Counter
+
+(<= (game_state_counter $name $ ?n_3 ?n_2 ?n_1 ?n_0)
+    (board_state $player $piece ?n_3 ?n_2 ?n_1 ?n_0 eq))
+(<= (game_state_counter $name ?n_3 ?n_2 ?n_1 ?n_0)
+    (field_state $player $piece ?n_3 ?n_2 ?n_1 ?n_0 eq))
+
+;; Game State Depth
+
+;(<= (state_depth $name ?n_3 ?n_2 ?n_1 ?n_0)
+;    (game_state $name ?previous_state ?next_state))

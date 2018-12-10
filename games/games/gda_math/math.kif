@@ -1,7 +1,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; A Test Game for a Math Package
+;;; A Test Game for GDL Math Library
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;;;; TODO
 ; nextの段階でテストを実行させる
 ; タスクの定義と実行を分離させる
 ; このままだとGDLが読み込まれないのはbase,init,legalに問題あり
@@ -380,35 +381,7 @@
     (true (test ?name waiting)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; A Common Package of Mathematics
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Notation
-;;;    a.b = ?i1 ?i2 ... (Let (a ?i1 ?i2 ...))
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Numbers: 0-65535
-;;; - Hexadecimal 4 digit (16bit)
-;;;    (num i.3 i.2 i.1 i.0) = i.0 * 2^4 + i.1 * 2^8 + i.2 * 2^12 + i.3 * 2^16
-;;;    (num nan nan nan nan) = NaN (Not a number including overflow)
-;;;    (minnum num.i) -> num.i == Zero
-;;;    (maxnum num.i) -> num.i == 0xFFFF
-;;;    (nan num.i) -> num.i == NaN
-;;;
-;;; Arithmetic Operations: + - * / %
-;;;    (plus num.a num.b num.sum)     -> num.a + num.b = num.sum
-;;;    (minus num.a num.b num.diff)   -> num.a - num.b = num.diff
-;;;    (mul num.a num.b num.product)  -> num.a * num.b = num.product
-;;;    (div num.a num.b num.quotient) -> num.a / num.b = num.quotient
-;;;    (rem num.a num.b num.surplus)  -> num.a % num.b = num.surplus
-;;;
-;;; Comparison Operations: < > <= >= == !=
-;;;    (lt num.a num.b) -> num.a < num.b
-;;;    (gt num.a num.b) -> num.a > num.b
-;;;    (le num.a num.b) -> num.a <= num.b
-;;;    (ge num.a num.b) -> num.a >= num.b
-;;;    (eq num.a num.b) -> num.a == num.b
-;;;    (ne num.a num.b) -> num.a != num.b
+;;; GDL Math Library
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;; Digits
@@ -434,6 +407,10 @@
 ;; Binary Digits
 (binary o)
 (binary i)
+
+;; Sign (plus/minus)
+(sign plus)
+(sign minus)
 
 ;;; Numbers / NaN
 
@@ -665,55 +642,55 @@
 ;;; Comparison Operations
 
 ;; i < j
-(<= (lt ?i3 ?i2 ?i1 ?i0 ?j3 ?j2 ?j1 ?j0)
+(<= (compare lt ?i3 ?i2 ?i1 ?i0 ?j3 ?j2 ?j1 ?j0)
     (comparator ?i3 ?j3)
     (num ?i3 ?i2 ?i1 ?i0)
     (num ?j3 ?j2 ?j1 ?j0))
-(<= (lt ?i3 ?i2 ?i1 ?i0 ?i3 ?j2 ?j1 ?j0)
+(<= (compare lt ?i3 ?i2 ?i1 ?i0 ?i3 ?j2 ?j1 ?j0)
     (comparator ?i2 ?j2)
     (num ?i3 ?i2 ?i1 ?i0)
     (num ?i3 ?j2 ?j1 ?j0))
-(<= (lt ?i3 ?i2 ?i1 ?i0 ?i3 ?i2 ?j1 ?j0)
+(<= (compare lt ?i3 ?i2 ?i1 ?i0 ?i3 ?i2 ?j1 ?j0)
     (comparator ?i1 ?j1)
     (num ?i3 ?i2 ?i1 ?i0)
     (num ?i3 ?i2 ?j1 ?j0))
-(<= (lt ?i3 ?i2 ?i1 ?i0 ?i3 ?i2 ?i1 ?j0)
+(<= (compare lt ?i3 ?i2 ?i1 ?i0 ?i3 ?i2 ?i1 ?j0)
     (comparator ?i0 ?j0)
     (num ?i3 ?i2 ?i1 ?i0)
     (num ?i3 ?i2 ?i1 ?j0))
 
 ;; i <= j
-(<= (le ?i3 ?i2 ?i1 ?i0 ?j3 ?j2 ?j1 ?j0)
-    (lt ?i3 ?i2 ?i1 ?i0 ?j3 ?j2 ?j1 ?j0))
-(<= (le ?i3 ?i2 ?i1 ?i0 ?i3 ?i2 ?i1 ?i0)
+(<= (compare le ?i3 ?i2 ?i1 ?i0 ?j3 ?j2 ?j1 ?j0)
+    (compare lt ?i3 ?i2 ?i1 ?i0 ?j3 ?j2 ?j1 ?j0))
+(<= (compare le ?i3 ?i2 ?i1 ?i0 ?i3 ?i2 ?i1 ?i0)
     (num ?i3 ?i2 ?i1 ?i0))
 
 ;; i > j
-(<= (gt ?i3 ?i2 ?i1 ?i0 ?j3 ?j2 ?j1 ?j0)
-    (lt ?j3 ?j2 ?j1 ?j0 ?i3 ?i2 ?i1 ?i0))
+(<= (compare gt ?i3 ?i2 ?i1 ?i0 ?j3 ?j2 ?j1 ?j0)
+    (compare lt ?j3 ?j2 ?j1 ?j0 ?i3 ?i2 ?i1 ?i0))
 
 ;; i >= j
-(<= (ge ?i3 ?i2 ?i1 ?i0 ?j3 ?j2 ?j1 ?j0)
-    (gt ?j3 ?j2 ?j1 ?j0 ?i3 ?i2 ?i1 ?i0))
+(<= (compare ge ?i3 ?i2 ?i1 ?i0 ?j3 ?j2 ?j1 ?j0)
+    (compare gt ?j3 ?j2 ?j1 ?j0 ?i3 ?i2 ?i1 ?i0))
 
 ;; i == j
-(<= (eq ?i3 ?i2 ?i1 ?i0 ?i3 ?i2 ?i1 ?i0 i)
+(<= (compare eq ?i3 ?i2 ?i1 ?i0 ?i3 ?i2 ?i1 ?i0 i)
     (num ?i3 ?i2 ?i1 ?i0))
-(<= (eq ?i3 ?i2 ?i1 ?i0 ?j3 ?j2 ?j1 ?j0 o)
-    (not (eq ?i3 ?i2 ?i1 ?i0 ?j3 ?j2 ?j1 ?j0 i))
+(<= (compare eq ?i3 ?i2 ?i1 ?i0 ?j3 ?j2 ?j1 ?j0 o)
+    (not (compare eq ?i3 ?i2 ?i1 ?i0 ?j3 ?j2 ?j1 ?j0 i))
     (num ?i3 ?i2 ?i1 ?i0)
     (num ?j3 ?j2 ?j1 ?j0))
 
-(<= (eq_b
+(<= (compare eq_b
         ?i15 ?i14 ?i13 ?i12 ?i11 ?i10 ?i9 ?i8 ?i7 ?i6 ?i5 ?i4 ?i3 ?i2 ?i1 ?i0
         ?i15 ?i14 ?i13 ?i12 ?i11 ?i10 ?i9 ?i8 ?i7 ?i6 ?i5 ?i4 ?i3 ?i2 ?i1 ?i0
         i)
     (num_b ?i15 ?i14 ?i13 ?i12 ?i11 ?i10 ?i9 ?i8 ?i7 ?i6 ?i5 ?i4 ?i3 ?i2 ?i1 ?i0))
-(<= (eq_b
+(<= (compare eq_b
         ?i15 ?i14 ?i13 ?i12 ?i11 ?i10 ?i9 ?i8 ?i7 ?i6 ?i5 ?i4 ?i3 ?i2 ?i1 ?i0
         ?j15 ?j14 ?j13 ?j12 ?j11 ?j10 ?j9 ?j8 ?j7 ?j6 ?j5 ?j4 ?j3 ?j2 ?j1 ?j0
         o)
-    (not (eq_b
+    (not (compare eq_b
         ?i15 ?i14 ?i13 ?i12 ?i11 ?i10 ?i9 ?i8 ?i7 ?i6 ?i5 ?i4 ?i3 ?i2 ?i1 ?i0
         ?j15 ?j14 ?j13 ?j12 ?j11 ?j10 ?j9 ?j8 ?j7 ?j6 ?j5 ?j4 ?j3 ?j2 ?j1 ?j0
         i))

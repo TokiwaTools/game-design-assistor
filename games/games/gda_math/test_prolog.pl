@@ -1,0 +1,2 @@
+:- writeln('hello world').
+:- halt.

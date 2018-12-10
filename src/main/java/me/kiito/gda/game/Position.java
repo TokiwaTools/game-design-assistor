@@ -3,44 +3,27 @@ package me.kiito.gda.game;
 import java.util.Objects;
 
 public final class Position implements Comparable<Position> {
-	public static final Position ALL = new Position();
 	public final int X, Y;
 	public final Notation NOTATION;
-	private final boolean isAll;
 
 	protected Position(int x, int y) {
-		this(x, y, Notation.ABSTRACT);
+		this(x, y, Notation.ABSOLUTE);
 	}
 
 	protected Position(int x, int y, Notation notation) {
 		this.X = x;
 		this.Y = y;
 		this.NOTATION = notation;
-		this.isAll = false;
-	}
-
-	private Position() {
-		this.X = 0;
-		this.Y = 0;
-		this.NOTATION = Notation.ABSTRACT;
-		this.isAll = true;
-	}
-
-	public boolean isAll() {
-		return isAll;
 	}
 
 	@Override
 	public String toString() {
-		if (this == ALL) {
-			return "(all, all)";
-		}
 		return "(" + X + ", " + Y + ")";
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == this || this == ALL || obj == ALL) {
+		if (obj == this) {
 			return true;
 		}
 		if (obj instanceof Position) {
@@ -52,7 +35,7 @@ public final class Position implements Comparable<Position> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(X, Y, NOTATION, isAll);
+        return Objects.hash(X, Y, NOTATION);
     }
 
     @Override
@@ -64,7 +47,7 @@ public final class Position implements Comparable<Position> {
     }
 
     public enum Notation {
-    	ABSTRACT,
+    	ABSOLUTE,
     	RELATIVE
     }
 }

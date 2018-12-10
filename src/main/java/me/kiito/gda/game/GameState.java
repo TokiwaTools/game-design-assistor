@@ -1,6 +1,6 @@
 package me.kiito.gda.game;
 
-abstract class GameState {
+public abstract class GameState {
 	private String name;
 	private GameState previousState;
 	private GameState nextState;

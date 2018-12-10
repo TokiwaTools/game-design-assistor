@@ -1,0 +1,108 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Master: Components
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;; Player
+
+; (role $player)
+
+(<= (player_opponent ?player1 ?player2)
+    (distinct ?player1 ?player2)
+    (role ?player1)
+    (role ?player2))
+
+;;; Position
+
+(<= (position
+        ?x_3 ?x_2 ?x_1 ?x_0
+        ?y_3 ?y_2 ?y_1 ?y_0
+        ?notation)
+    (num ?x_3 ?x_2 ?x_1 ?x_0)
+    (num ?y_3 ?y_2 ?y_1 ?y_0)
+    (notation ?notation))
+
+;;; Piece
+
+; (piece $name)
+
+;;; Square
+
+(<= (square
+        ?x_3 ?x_2 ?x_1 ?x_0
+        ?y_3 ?y_2 ?y_1 ?y_0
+        ?pos_notation
+        ?player
+        ?piece)
+    (position ?x_3 ?x_2 ?x_1 ?x_0 ?y_3 ?y_2 ?y_1 ?y_0 ?pos_notation)
+    (role ?player)
+    (piece ?piece))
+
+(<= (square
+        ?x_3 ?x_2 ?x_1 ?x_0
+        ?y_3 ?y_2 ?y_1 ?y_0
+        ?pos_notation
+        _none
+        _none)
+    (position ?x_3 ?x_2 ?x_1 ?x_0 ?y_3 ?y_2 ?y_1 ?y_0 ?pos_notation))
+
+;;; Field
+
+(<= (base (field ?player ?piece ?n_3 ?n_2 ?n_1 ?n_0))
+    (role ?player)
+    (piece ?piece)
+    (num ?n_3 ?n_2 ?n_1 ?n_0))
+
+;;; Board
+
+(<= (base (board
+            ?x_3 ?x_2 ?x_1 ?x_0
+            ?y_3 ?y_2 ?y_1 ?y_0
+            ?player
+            ?piece))
+    (square ?x_3 ?x_2 ?x_1 ?x_0 ?y_3 ?y_2 ?y_1 ?y_0 absolute ?player ?piece)
+    (cell_in_range ?x_3 ?x_2 ?x_1 ?x_0 ?y_3 ?y_2 ?y_1 ?y_0))
+
+;(board_range
+;    $minX_3 $minX_2 $minX_1 $minX_0
+;    $minY_3 $minY_2 $minY_1 $minY_0
+;    $maxX_3 $maxX_2 $maxX_1 $maxX_0
+;    $maxY_3 $maxY_2 $maxY_1 $maxY_0)
+
+;;; Turn
+
+(<= (base (turn ?n_3 ?n_2 ?n_1 ?n_0 ?player))
+    (num ?n_3 ?n_2 ?n_1 ?n_0)
+    (role ?player))
+
+(<= (turn_at ?n_3 ?n_2 ?n_1 ?n_0)
+    (true (turn ?n_3 ?n_2 ?n_1 ?n_0 ?player))
+    (role ?player))
+
+(<= (control ?player)
+    (true (turn ?n_3 ?n_2 ?n_1 ?n_0 ?player))
+    (num ?n_3 ?n_2 ?n_1 ?n_0))
+
+(base end_for_max_turn)
+
+;;; Score
+
+(<= (base (score ?player ?n_3 ?n_2 ?n_1 ?n_0))
+    (role ?player)
+    (num ?n_3 ?n_2 ?n_1 ?n_0))
+
+;;; Legal Moves
+
+(<= (legal ?player noop)
+    (control ?player2)
+    (player_opponent ?player ?player2))
+
+(<= (legal ?player noop)
+    (control ?player)
+    (not (has_legal_moves ?player)))
+
+;;; Enums
+
+(notation absolute)
+(notation relative)
+
+(none _none)
